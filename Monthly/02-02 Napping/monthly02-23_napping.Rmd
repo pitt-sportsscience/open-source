@@ -1,0 +1,42 @@
+---
+title: "02-02 Monthly: Napping"
+author: "Pitt Sports Science"
+date: "2023-03-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Pitt Sports Science Monthly: Napping
+
+### 02-02 March 2023
+
+This markdown script contains all relevant data to reproduce the figures of the systematic review and meta-analysis by [Mesas et al. 2023](https://pubmed-ncbi-nlm-nih-gov.pitt.idm.oclc.org/36690376/) in Br J Sports Med on the effects of napping on cognitive and physical performance in recreationally active individuals and athletes.
+
+**Reference**
+*Mesas AE, Núñez de Arenas-Arroyo S, Martinez-Vizcaino V, Garrido-Miguel M, Fernández-Rodríguez R, Bizzozero-Peroni B, Torres-Costoso AI. Is daytime napping an effective strategy to improve sport-related cognitive and physical performance and reduce fatigue? A systematic review and meta-analysis of randomised controlled trials. Br J Sports Med. 2023 Jan 23:bjsports-2022-106355. doi: 10.1136/bjsports-2022-106355. Epub ahead of print. PMID: 36690376.*
+
+
+### Import necessary packages
+
+Although there are multiple packages specifically dedicated to generate forest plots common to meta-analyses (e.g., `forestplot`, ), for sake of simplicity and consistency with other monthlys, we recreate these figures using `ggplot2`.
+
+```{r package import, include = TRUE}
+library(tidyverse)
+```
+
+
+### Create data
+
+For the monthly, we will only focus on the main result of the study: napping for 30-60 minutes in the afternoon can improve cognitive and physical performance during otherwise normal sleep in recreationally active individuals and athletes.
+
+
+### Recreate forest plots
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
