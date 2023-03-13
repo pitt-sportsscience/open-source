@@ -7,6 +7,10 @@ This is the official open-source repository of the University of Pittsburgh Spor
 ### Directory
 The repository is structured by project. 
 
+
+#### Monthly
+The `Monthly` folder contains all Pitt Sports Science Monthly's and relevant scripts to reproduce the figures from the manuscripts/PDFs.
+
 #### Test-retest reliability
 The `test-retest reliability` folder contains relevant scripts to quantify intraclass correlation coefficients, coefficient of variation, standard error of measurements or minimum detectable change for relevant sports science outcomes. It also includes a **Shiny App** that allows users to compare the change in performance to the measurement error found in the literature or computed by us, in order to determine if the change is physiologically relevant or possibly due to natural variability in measurement.
 
