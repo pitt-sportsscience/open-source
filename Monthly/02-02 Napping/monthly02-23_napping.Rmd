@@ -5,38 +5,211 @@ date: "2023-03-12"
 output: html_document
 ---
 
+```{r, echo=FALSE, fig.width = 3, fig.height = 1}
+htmltools::img(src = knitr::image_uri("pitt_ss.png"), 
+               alt = 'logo', 
+               style = 'position:absolute; top:0; right:0; padding:10px;')
+```
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
 
 ## Pitt Sports Science Monthly: Napping
 
 ### 02-02 March 2023
 
-This markdown script contains all relevant data to reproduce the figures of the systematic review and meta-analysis by [Mesas et al. 2023](https://pubmed-ncbi-nlm-nih-gov.pitt.idm.oclc.org/36690376/) in Br J Sports Med on the effects of napping on cognitive and physical performance in recreationally active individuals and athletes.
+This markdown script contains all relevant data to reproduce the figures of the systematic review and meta-analysis by [Mesas et al. 2023](https://pubmed.ncbi.nlm.nih.gov/36690376/#:~:text=Conclusions%3A%20After%20a%20night%20of,the%20reduction%20of%20perceived%20fatigue). in Br J Sports Med on the effects of napping on cognitive and physical performance in recreationally active individuals and athletes.
 
-**Reference**
+**Reference** <br />
 *Mesas AE, Núñez de Arenas-Arroyo S, Martinez-Vizcaino V, Garrido-Miguel M, Fernández-Rodríguez R, Bizzozero-Peroni B, Torres-Costoso AI. Is daytime napping an effective strategy to improve sport-related cognitive and physical performance and reduce fatigue? A systematic review and meta-analysis of randomised controlled trials. Br J Sports Med. 2023 Jan 23:bjsports-2022-106355. doi: 10.1136/bjsports-2022-106355. Epub ahead of print. PMID: 36690376.*
 
 
 ### Import necessary packages
 
-Although there are multiple packages specifically dedicated to generate forest plots common to meta-analyses (e.g., `forestplot`, ), for sake of simplicity and consistency with other monthlys, we recreate these figures using `ggplot2`.
+Although there are multiple packages specifically dedicated to generate forest plots common to meta-analyses (e.g., `forestplot`, ), for sake of simplicity and consistency with other monthly's, we recreate these figures using `ggplot2`, so together with data manipulation packages (i.e. `dplyr`), we will just import the whole `tidyverse` suite.
 
-```{r package import, include = TRUE}
+```{r package import, include = TRUE, message = FALSE}
 library(tidyverse)
 ```
 
+### Housekeeping
 
-### Create data
+We will create two vectors to conveniently use to control the aesthetics of the figures later on. *pitt_fill_colors* will be used to coordinate the forest plot colors with Pitt hex codes, and *figure_theme* will be used to change relevant text and background aesthetics.
 
-For the monthly, we will only focus on the main result of the study: napping for 30-60 minutes in the afternoon can improve cognitive and physical performance during otherwise normal sleep in recreationally active individuals and athletes.
+```{r housekeeping elements, include = TRUE}
+# color package
+pitt_fill_colors = c("#003594", "#FFB81C", "grey51", 'black', 'white')
 
-
-### Recreate forest plots
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+# create list for aesthetics to be used throughout the script
+figure_theme <- list(theme(axis.line.x = element_line(color = "black"),
+                           axis.text = element_text(size = 12),
+                           panel.background = element_blank(),
+                           axis.ticks = element_blank(),
+                           axis.title = element_blank()))
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+### Create data for forest plot
+
+For the monthly, we will only focus on the main result of the study: napping for 30-60 minutes in the afternoon improves cognitive and physical performance as well as indicators of fatigue during otherwise normal sleep in recreationally active individuals and athletes (18-35yrs). 
+
+The three figures we recreate can be found on **pg. 6** of the paper. Luckily, the authors provided all relevant data to replicate their figure (i.e., **standardized mean differences and lower and upper 95% confidence intervals**).
+
+```{r, create data}
+df_cognition <- data.frame(nap_duration = c("<30min", "30 to <60min", "60 to 120min"),
+                 heterogeneity = c(68.8, 70.3, 51.7),
+                 studies = c(5,6,4),
+                 participants = c(80, 82, 47),
+                 smd = c(0.44, 1.19, 0.39),
+                 lowCI = c(-0.05, 0.61, -0.03),
+                 upCI = c(0.94, 1.75, 0.82))
+```
+
+### Recreate the forest plot in Figure 2D: the effect of napping on cognitive performance
+
+To recreate a forest plot, we can simply use `geom_point` and `geom_errorbar` to draw the **standardized mean differences** and **95% confidence intervals** of a forest plot. Typically, the null effect is displayed with a vertical line at x = 0, which we can add using `geom_vline`. At times, the scaling needs to be adjusted to demonstrate a (null) effect of the analysis (i.e., include 0), which we can ensure using the *limits* and *breaks* arguments in the `scale_x_continuous` function in this case.
+
+```{r pressure, echo=FALSE}
+df_cognition %>%
+  ggplot(aes(y = nap_duration,
+             x = smd)) +
+  geom_point(shape = 18,
+             size = 4,
+             color = pitt_fill_colors[1]) +
+  geom_vline(xintercept = 0,
+             linetype = "solid") +
+  geom_errorbar(aes(xmin = lowCI,
+                    xmax = upCI),
+                color = pitt_fill_colors[1],
+                width = 0) + 
+  scale_x_continuous(limits = c(-0.5, 2),
+                     breaks = seq(from = 0, to = 1.5, by = 0.5)) +
+  figure_theme
+
+```
+#### Repeat the same steps to recreate figures 2E and 2F
+
+In theory, you could simply repeat the same steps to compute a separate figure for each panel. To make our lives easier though, we will incorporate all three figures into separate panels, using the `facet_wrap` function.
+
+### Create all relevant data
+
+The data we import now are taken from figures 2D, 2E and 2F on **pg. 6**. Note that we will add another column **outcome**, which will allow us to repeat the same analysis for all factors of its variable. Since Mesas et al. 2023 looked at the effects of napping on cognition, physical performance and fatigue, we will add these factors to our dataframe using the `rep()` function and the **each** as well as **levels** argument to indicate the repetition scheme and factor order, respectively.
+
+```{r create data to be used with facet wrap, include = TRUE}
+df_all <- data.frame(nap_duration = rep(c("<30min", "30 to <60min", "60 to 120min"), times = 3),
+                 heterogeneity = c(68.8, 70.3, 51.7, #cognition
+                                   65.2, 93.2, 67.2, #physical
+                                   87.7, 88.3, 88.0), #fatigue
+                 studies = c(5,6,4, #cognition
+                             9,10,4, #phycial
+                             8,8,2), #fatigue
+                 participants = c(80, 82, 47, #cognition
+                                  133, 138, 47, #physical
+                                  119, 116, 26), #fatigue
+                 smd = c(0.44, 1.19, 0.39,
+                         0.64, 1.74, 0.30,
+                         -0.19, -1.41, -0.04),
+                 lowCI = c(-0.05, 0.61, -0.03,
+                           0.32, 1.01, 0.00,
+                           -0.87, -2.10, -1.41),
+                 upCI = c(0.94, 1.75, 0.82,
+                          0.97, 2.46, 0.60,
+                          0.49, -0.73, 1.33),
+                 outcome = factor(rep(c("Cognition", "Physical", "Fatigue"), each = 3),
+                                  levels = c("Cognition", "Physical", "Fatigue")))# add identifier for facet_wrap
+```
+
+### Plot all data using facet_wrap()
+
+We will repeat the exact same figure, but now that we have the **outcome** classifier in our `df_all` dataframe, we can use the `facet_wrap` function to conveniently repeat the same procedures for all factors of the outcome variable (i.e., cognition, physical and fatigue). Also, note that changing the order of `geom_vline` and `geom_point` allows us to print the blue diamonds **above** the vertical line, since we specify this layer later (and thus "on top of") the previous layer.
+
+```{r, plot all into one figure}
+# create and store figure as 'all_forest_plots' for subsequent export
+all_forest_plots <- df_all %>%
+  ggplot(aes(y = nap_duration,
+             x = smd)) +
+  geom_vline(xintercept = 0,
+             linetype = "solid") +
+  geom_point(shape = 18,
+             size = 8,
+             color = pitt_fill_colors[1]) +
+  geom_errorbar(aes(xmin = lowCI,
+                    xmax = upCI),
+                color = pitt_fill_colors[1],
+                linewidth = 2,
+                width = 0) + 
+  scale_x_continuous(#limits = c(-2.5, 2.5),
+                     breaks = seq(from = -2, to = 2, by = 1)) +
+  facet_wrap(~outcome,
+             scales = "free_x") +
+  figure_theme +
+  theme(strip.text = element_text(size = 14),
+        axis.text.x = element_text(size = 8))
+
+# show figure
+all_forest_plots
+```
+
+### Adjust aesthetics for easy visual identification
+
+**Background** <br />
+Since we don't want to have white backdrop included in our figure when incorporating it with the remaining monthly graphics, we can specify the **panel.background** and **plot.background** to be *transparent* using the `theme` function. 
+
+**Facet coloring** <br />
+We will also adjust the color of the `facet_wrap` facets using the **strip.background** argument.
+
+**Proportional color-coding of forest plot points and errorbars** <br />
+In order to help the narrative and quickly identify which nap duration was associated with improved cogntion, physical performance and fatigue, we will create a new column **highlight** using the `mutate` function and use this to color-code the `geom_point` and `geom_errorbar` calls based on the levels of **highlight**.
+
+```{r visualization add-ons, include = TRUE}
+all_forest_plots <- df_all %>%
+  mutate(highlight = case_when(nap_duration == "30 to <60min" ~ "Yellow",
+                               TRUE ~ "Blue")) %>%
+  ggplot(aes(y = nap_duration,
+             x = smd)) +
+  geom_vline(xintercept = 0,
+             linetype = "solid") +
+  geom_point(shape = 18,
+             size = 8,
+             aes(color = highlight)) +
+  geom_errorbar(aes(xmin = lowCI,
+                    xmax = upCI,
+                    color = highlight),
+                linewidth = 2,
+                width = 0) + 
+  scale_x_continuous(#limits = c(-2.5, 2.5),
+                     breaks = seq(from = -2, to = 2, by = 1)) +
+  scale_color_manual(values = pitt_fill_colors) +
+  facet_wrap(~outcome,
+             scales = "free_x") +
+  figure_theme +
+  theme(strip.text = element_text(size = 14),
+        legend.position = "none",
+        axis.text.x = element_text(size = 8))+ theme(plot.background = element_rect(fill = "transparent"),
+                                panel.background = element_rect(fill = "transparent"),
+                                strip.background = element_rect(color = pitt_fill_colors[1],
+                                                                fill = pitt_fill_colors[1]),
+                                panel.grid = element_blank(),
+                                strip.text = element_text(color = "white"),
+                                panel.border = element_blank(),
+                                axis.text.y = element_text(size = 16, 
+                                                           face = "bold",
+                                                           color = "white"),
+                                axis.text.x = element_text(size = 12))
+
+all_forest_plots
+```
+
+### Export figure
+
+To save the figure and combine it with the remaining graphics in our monthly, we can use the `ggsave` function. Note: we can specify the dimensions of the exported graph using the **width** and **height** arguments, the filetype based on the suffix of the filename and the resolution based on the **dpi** (dots per inch) argument.
+
+```{r save figure, include = TRUE}
+ggsave('monthly02-23_napping_forestplots.png',
+       all_forest_plots, #change axis text font size nack to 10 for monthly
+       width = 9,
+       height = 2.5,
+       units = "in",
+       dpi = 300)
+```
