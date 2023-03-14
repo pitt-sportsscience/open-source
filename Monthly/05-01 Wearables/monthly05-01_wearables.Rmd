@@ -1,0 +1,165 @@
+---
+title: "Monthly 05-01 Wearables"
+author: "Pitt Sports Science"
+date: "2022-11-05"
+output: html_document
+---
+
+```{r, echo=FALSE, fig.width = 3, fig.height = 1}
+htmltools::img(src = knitr::image_uri("pitt_ss.png"), 
+               alt = 'logo', 
+               style = 'position:absolute; top:0; right:0; padding:10px;')
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This markdown script contains all relevant data to reproduce the figures of the systematic review and meta-analysis by [Miller et al. 2022](A Validation of Six Wearable Devices for Estimating Sleep, Heart Rate and Heart Rate Variability in Healthy Adults) in Sensors, which compared wellness outcomes of common wearable devices to those derived from gold-standard and laboratory-based polysomnography.
+
+**Reference** <br />
+*Miller, D.J.; Sargent, C.; Roach, G.D. A Validation of Six Wearable Devices for Estimating Sleep, Heart Rate and Heart Rate Variability in Healthy Adults. Sensors 2022, 22, 6317. https://doi.org/10.3390/s22166317*
+
+### Import packages and specify data and colors
+
+```{r package + data import, message = FALSE}
+library(tidyverse)
+
+#import data
+df <- data.frame(Device = c("Apple", "Garmin", "Polar", "Oura", "WHOOP", "Somfit"),
+                 Sleep_Time = c(48.1, 45.3, 31.2, 29.0, 30.3, 33.7),
+                 Sleep_Time_sd = c(30.4, 36.3, 32.6, 28.6, 23.0, 27.1),
+                 Wake_Time = c(42, 45.7, 26, 25, 28, 34),
+                 Wake_Time_sd = c(28.9, 34.4, 31.1, 26, 20.9, 28.4),
+                 HR = c(1.5, 5.4, 1.5, 1.8, 0.7, 2.6),
+                 HR_sd = c(2.1, 12.8, 2.2, 4.5, 1.0, 6.5),
+                 HRV = c(22.5, 33.1, 18.8, 18.9, 4.7, 24.0),
+                 HRV_sd = c(19.2, 39.9, 34, 35.9, 3.6, 35),
+                 HR_ICC = c(0.96, 0.41, 0.93, 0.85, 0.99, 0.65),
+                 HRV_ICC = c(0.67, 0.24, 0.65, 0.63, 0.99, 0.69))
+
+##use hex colors to specify color package
+pitt_fill_colors = c("#003594", "#FFB81C", "grey51", 'black', 'white')
+```
+
+
+### Plot mean bias for sleep and wake, time heart rate (HR) and heart rate variability (HRV)
+
+All devices are compared to gold-standard polysomnography.
+
+```{r figure1, message = FALSE}
+# sleep time
+df %>%
+  ggplot(aes(x = fct_reorder(Device, Sleep_Time), y = Sleep_Time)) +
+  geom_col(fill = pitt_fill_colors[1],
+           color = pitt_fill_colors[1]) +
+  geom_errorbar(aes(ymin = Sleep_Time,
+                    ymax = Sleep_Time + Sleep_Time_sd),
+                color = pitt_fill_colors[1],
+                linewidth = 0.5,
+                width = 0.1) +
+  geom_text(aes(label = Sleep_Time,
+                y = 3),
+            color = "white") +
+  labs(y = "Sleep Time (Device - PSG)") +
+  coord_flip() +
+  theme(axis.line = element_blank(),
+        panel.background = element_rect(fill = "transparent",
+                                        color = NA),
+        plot.background = element_rect(fill = "transparent",
+                                       color = NA),
+        panel.grid = element_blank(),
+        legend.background = element_rect(fill = "transparent"),
+        legend.box.background = element_rect(fill = "transparent",
+                                             color = NA),
+        axis.title = element_blank(),
+        axis.ticks = element_blank())
+
+
+# wake time
+df %>%
+  ggplot(aes(x = fct_reorder(Device, Wake_Time), y = Wake_Time)) +
+  geom_col(fill = pitt_fill_colors[1],
+           color = pitt_fill_colors[1]) +
+  geom_errorbar(aes(ymin = Wake_Time,
+                    ymax = Wake_Time + Wake_Time_sd),
+                color = pitt_fill_colors[1],
+                linewidth = 0.5,
+                width = 0.1) +
+    geom_text(aes(label = Wake_Time,
+                y = 3),
+            color = "white") +
+  labs(y = "Wake Time (Device - PSG)") +
+  coord_flip() +
+  theme(axis.line = element_blank(),
+        panel.background = element_rect(fill = "transparent",
+                                        color = NA),
+        plot.background = element_rect(fill = "transparent",
+                                       color = NA),
+        panel.grid = element_blank(),
+        legend.background = element_rect(fill = "transparent"),
+        legend.box.background = element_rect(fill = "transparent",
+                                             color = NA),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank())
+
+
+# heart rate
+df %>%
+  ggplot(aes(x = fct_reorder(Device, HR), y = HR)) +
+  geom_col(fill = pitt_fill_colors[1],
+           color = pitt_fill_colors[1]) +
+  geom_errorbar(aes(ymin = HR,
+                    ymax = HR + HR_sd),
+                color = pitt_fill_colors[1],
+                linewidth = 0.5,
+                width = 0.1) +
+    geom_text(aes(label = HR,
+                y = 0.3),
+            color = "white") +
+  labs(y = "Heart Rate (Device - PSG)") +
+  coord_flip() +
+  theme(axis.line = element_blank(),
+        panel.background = element_rect(fill = "transparent",
+                                        color = NA),
+        plot.background = element_rect(fill = "transparent",
+                                       color = NA),
+        panel.grid = element_blank(),
+        legend.background = element_rect(fill = "transparent"),
+        legend.box.background = element_rect(fill = "transparent",
+                                             color = NA),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank())
+
+
+# heart rate variability
+df %>%
+  ggplot(aes(x = fct_reorder(Device, HRV), y = HRV)) +
+  geom_col(fill = pitt_fill_colors[1],
+           color = pitt_fill_colors[1]) +
+  geom_errorbar(aes(ymin = HRV,
+                    ymax = HRV + HRV_sd),
+                color = pitt_fill_colors[1],
+                linewidth = 0.5,
+                width = 0.1) +
+    geom_text(aes(label = HRV,
+                y = 2),
+            color = "white") +
+  labs(y = "HRV (Device - PSG)") +
+  coord_flip() +
+  theme(axis.line = element_blank(),
+        panel.background = element_rect(fill = "transparent",
+                                        color = NA),
+        plot.background = element_rect(fill = "transparent",
+                                       color = NA),
+        panel.grid = element_blank(),
+        legend.background = element_rect(fill = "transparent"),
+        legend.box.background = element_rect(fill = "transparent",
+                                             color = NA),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank())
+```
