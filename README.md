@@ -11,4 +11,4 @@ The repository is structured by version, year and topic.
 The `Monthly` folder contains all Pitt Sports Science Monthly's and relevant scripts to reproduce the figures from the manuscripts/PDFs.
 
 ### Contact
-For questions, issues, or bugs, please contact Dr. Felix Proessl at fproessl@athletics.pitt.edu
+For questions, issues, or bugs, please contact Felix Proessl at fproessl@athletics.pitt.edu
