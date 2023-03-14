@@ -2,7 +2,7 @@
 
 ### Basic information
 
-This is the official `open-source repository` of the University of Pittsburgh Sports Science department, where we will upload our Pitt Sports Science Monthly, release open-source ShinyApps and corresponding scripts, or any other sports-science-related content. 
+This is the official `open-source repository` of the University of Pittsburgh Sports Science department, where we will upload our Pitt Sports Science Monthly, release ShinyApps and the correspoding scripts, or any other sports-science-related content. 
 
 ### Directory
 The repository is structured by version, year and topic. 
