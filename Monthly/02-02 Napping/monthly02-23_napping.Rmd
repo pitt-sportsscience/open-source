@@ -16,10 +16,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-## Pitt Sports Science Monthly: Napping
-
-### 02-02 March 2023
-
 This markdown script contains all relevant data to reproduce the figures of the systematic review and meta-analysis by [Mesas et al. 2023](https://pubmed.ncbi.nlm.nih.gov/36690376/#:~:text=Conclusions%3A%20After%20a%20night%20of,the%20reduction%20of%20perceived%20fatigue). in Br J Sports Med on the effects of napping on cognitive and physical performance in recreationally active individuals and athletes.
 
 **Reference** <br />
