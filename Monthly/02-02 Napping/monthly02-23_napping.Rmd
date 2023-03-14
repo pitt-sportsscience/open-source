@@ -88,7 +88,9 @@ df_cognition %>%
   figure_theme
 
 ```
-#### Repeat the same steps to recreate figures 2E and 2F
+
+<br />
+**Repeat the same steps to recreate figures 2E and 2F**
 
 In theory, you could simply repeat the same steps to compute a separate figure for each panel. To make our lives easier though, we will incorporate all three figures into separate panels, using the `facet_wrap` function.
 
@@ -194,8 +196,7 @@ all_forest_plots <- df_all %>%
                                 strip.text = element_text(color = "white"),
                                 panel.border = element_blank(),
                                 axis.text.y = element_text(size = 16, 
-                                                           face = "bold",
-                                                           color = "white"),
+                                                           face = "bold"),
                                 axis.text.x = element_text(size = 12))
 
 all_forest_plots
@@ -205,9 +206,9 @@ all_forest_plots
 
 To save the figure and combine it with the remaining graphics in our monthly, we can use the `ggsave` function. Note: we can specify the dimensions of the exported graph using the **width** and **height** arguments, the filetype based on the suffix of the filename and the resolution based on the **dpi** (dots per inch) argument.
 
-```{r save figure, include = TRUE}
+```{r save figure, include = TRUE, message = FALSE}
 ggsave('monthly02-23_napping_forestplots.png',
-       all_forest_plots, #change axis text font size nack to 10 for monthly
+       all_forest_plots + theme(axis.text.y = element_text(size = 16, face = "bold", color = "white")), #change axis text font size nack to 10 for monthly
        width = 9,
        height = 2.5,
        units = "in",
