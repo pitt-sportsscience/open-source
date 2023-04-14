@@ -1,0 +1,42 @@
+---
+title: 'Monthly: VR'
+author: "Pitt Sports Science"
+date: "2023-04-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Study Information
+
+The study covered in this week's monthly demonstrates the validity of a virtual reality simulation to replicate real-world basketball scenarios and was conducted by Soltani and Morice. The full article can be accessed below:
+
+**Reference**
+Soltani P, Morice AHP. A multi-scale analysis of basketball throw in virtual reality for tracking perceptual-motor expertise. Scand J Med Sci Sports. 2023 Feb;33(2):178-188. doi: 10.1111/sms.14250. Epub 2022 Nov 18. PMID: 36315055.
+
+### Data and package import
+
+```{r data and packages, echo = FALSE}
+# import packages
+library(tidyverse)
+
+# import data
+df <- readxl::read_excel('fig4_data_soltani_and_morice_2023.xlsx')
+
+# glimpse at data
+head(df)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r figure 4, echo=FALSE}
+df %>% 
+  ggplot(aes(x = velocity, y = angle)) +
+  geom_point(aes(shape = type, ))
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
