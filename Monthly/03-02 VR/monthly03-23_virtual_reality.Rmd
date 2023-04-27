@@ -11,32 +11,147 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Study Information
 
-The study covered in this week's monthly demonstrates the validity of a virtual reality simulation to replicate real-world basketball scenarios and was conducted by Soltani and Morice. The full article can be accessed below:
+The study covered in this week's monthly demonstrates the validity of a virtual reality simulation to replicate real-world basketball kinematics and was conducted by Soltani and Morice. The full article can be accessed below:
 
 **Reference**
 Soltani P, Morice AHP. A multi-scale analysis of basketball throw in virtual reality for tracking perceptual-motor expertise. Scand J Med Sci Sports. 2023 Feb;33(2):178-188. doi: 10.1111/sms.14250. Epub 2022 Nov 18. PMID: 36315055.
 
 ### Data and package import
 
-```{r data and packages, echo = FALSE}
+```{r data and packages, message = FALSE}
 # import packages
 library(tidyverse)
+library(ggforce)
+
+# color package
+pitt_fill_colors = c("#003594", "#FFB81C", "grey51", 'black', 'brown')
 
 # import data
-df <- readxl::read_excel('fig4_data_soltani_and_morice_2023.xlsx')
+df1 <- readxl::read_excel('fig3_data_soltani_and_morice_2023.xlsx') %>% 
+  mutate(condition = paste0(sex, ', ', type),
+         sd_depth = abs(depth - depth_sd),
+         sd_side = abs(side - side_sd))
 
 # glimpse at data
-head(df)
+head(df1)
+
+# import data
+df2 <- readxl::read_excel('fig4_data_soltani_and_morice_2023.xlsx') %>% 
+  mutate(condition = paste0(sex, ', ', type),
+         sd_angle = abs(angle - angle_sd),
+         sd_velocity = abs(velocity - velocity_sd))
+
+# glimpse at data
+head(df2)
 ```
 
-## Including Plots
+### Recreate Figure 3
 
-You can also embed plots, for example:
+Authors included a basketball reference point in Fig. 3 of the manuscript, which can be incorporated using the `geom_circle()` function from the **ggforce** package.
 
-```{r figure 4, echo=FALSE}
-df %>% 
+Horizontal and vertical errorbars can be added using the standard `geom_errorbar()` function from the **ggplot2** package.
+
+```{r figure3, message = FALSE, warning = FALSE}
+#define circle parameters - x and y position, radius
+circles <- data.frame(
+  x0 = rep(0, times = 3),
+  y0 = c(3.225, 4.225, 5.225),
+  r = rep(0.2, length.out = 9)
+)
+
+df1 %>% 
+  ggplot() +
+  geom_errorbar(aes(x = side, y = depth,
+                    ymin = depth - sd_depth,
+                    ymax = depth + sd_depth,
+                    color = as.factor(distance_m)),
+                width = 0.01) +
+  geom_errorbar(aes(x = side, y = depth,
+                    xmin = side - sd_side,
+                    xmax = side + sd_side,
+                    color = as.factor(distance_m)),
+                width = 0.1) +
+  geom_circle(data = circles,
+            aes(x0 = x0, 
+                y0 = y0, 
+                r = r, 
+                color = as.factor(y0)),
+            fill = "transparent",
+            alpha = 0.25) +
+  coord_fixed() +
+  geom_point(aes(x = side, y = depth,
+                 shape = condition,
+                 color = as.factor(distance_m)),
+             size = 3,
+             fill = "white") +
+  labs(y = "Depth landing position (m)",
+       x = "Side landing position (m)",
+       color = "Distance",
+       shape = "Condition") +
+  scale_color_manual(values = pitt_fill_colors) +
+  scale_shape_manual(values = c(17, 2, 19, 1)) +
+  scale_x_continuous(breaks = seq(from = -3, to = 3, by = 0.5),
+                     limits = c(-1, 1)) +
+  scale_y_continuous(breaks = seq(from = 3, to = 6, by = 0.5),
+                     limits = c(3, 6)) +
+  theme_bw() +
+  theme(panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = 'transparent'),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key = element_rect(fill = 'transparent'),
+        panel.grid.major = element_blank(),
+        legend.box.background = element_rect(fill = "transparent"),
+        legend.position = "none")
+
+# save figure
+ggsave('depth_side_landing_position.png',
+       width = 2.5,
+       height = 2.8,
+       units = "in",
+       dpi = 300)
+```
+
+
+### Recreate Figure 4
+
+```{r figure4, message = FALSE, warning = FALSE}
+df2 %>% 
   ggplot(aes(x = velocity, y = angle)) +
-  geom_point(aes(shape = type, ))
+  geom_errorbar(aes(ymin = angle - sd_angle,
+                    ymax = angle + sd_angle,
+                    color = as.factor(distance_m)),
+                width = 0.01) +
+  geom_errorbar(aes(xmin = velocity - sd_velocity,
+                    xmax = velocity + sd_velocity,
+                    color = as.factor(distance_m)),
+                width = 0.1) +
+  geom_point(aes(shape = condition,
+                 color = as.factor(distance_m)),
+             size = 4,
+             fill = "white") +
+  labs(y = "Release angle (deg)",
+       x = "Release velocity (m/s)",
+       color = "Distance",
+       shape = "Condition") +
+  scale_color_manual(values = pitt_fill_colors) +
+  scale_shape_manual(values = c(17, 2, 19, 1)) +
+  scale_x_continuous(breaks = seq(from = 6.4, to = 8.4, by = 0.2)) +
+  scale_y_continuous(breaks = seq(from = 56, to = 66, by = 1)) +
+  theme_bw() +
+  theme(panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = 'transparent'),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key = element_rect(fill = 'transparent'),
+        panel.grid.major = element_blank(),
+        legend.position = "right",
+        legend.box.background = element_rect(fill = "transparent"))
+
+# save figure
+ggsave('release_angle_velocity.png',
+       width = 10,
+       height = 2.5,
+       units = "in",
+       dpi = 300)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
