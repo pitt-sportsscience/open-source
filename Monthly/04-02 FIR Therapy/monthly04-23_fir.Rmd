@@ -1,0 +1,173 @@
+---
+title: "Monthly 04-23: FIR Therapy"
+author: "Pitt Sports Science"
+date: "2023-05-31"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r data and package import}
+# import packages
+library(tidyverse)
+
+# import data
+df <- readxl::read_excel('data.xlsx')
+
+# take a look at the structure of the dataframe
+str(df)
+
+# consistent ordering of time factor
+df$Time <- factor(df$Time, levels = c("Pre", "0.5", "24", "48", "72", "96", "120"))
+```
+
+```{r visualize figures 2A-C and 2F, message = FALSE, warning = FALSE}
+# plot figure 2A - MVC Torque
+df %>% 
+  ggplot(aes(x = Time, y = MVC)) +
+  geom_line(aes(group = Group,
+                color = Group)) +
+  geom_errorbar(aes(ymin = MVC, ymax = MVC_SD,
+                    color = Group),
+                width = 0.1) +
+    geom_point(aes(fill = Group,
+                   color = Group),
+               size = 3,
+               shape = 21) +
+  scale_color_manual(values = c("#FF5A6D",
+                                "white")) +
+  scale_fill_manual(values = c("#FF5A6D",
+                                "white")) +
+  labs(y = "MVC Torque (Nm)",
+       x = "Time (hour)") +
+  theme_bw() +
+  theme(panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = 'transparent'),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key = element_rect(fill = 'transparent'),
+        panel.grid.major = element_blank(),
+        axis.text = element_text(size = 9),
+        axis.title = element_text(size = 13, face = "bold"),
+        legend.position = "none",
+        legend.box.background = element_rect(fill = "transparent"))
+
+# save figure
+ggsave('fig2a_mvc_torque.png',
+       width = 2, height = 2,
+       units = "in",
+       dpi = 300)
+
+# figure 2B - Visual analog scale soreness
+df %>% 
+  na.omit() %>% 
+  ggplot(aes(x = Time, y = VAS)) +
+  geom_line(aes(group = Group,
+                color = Group)) +
+  geom_errorbar(aes(ymin = VAS, ymax = VAS_SD,
+                    color = Group),
+                width = 0.1) +
+    geom_point(aes(fill = Group,
+                   color = Group),
+               size = 3,
+               shape = 21) +
+  scale_color_manual(values = c("#FF5A6D",
+                                "white")) +
+  scale_fill_manual(values = c("#FF5A6D",
+                                "white")) +
+  labs(y = "Soreness (0-100)",
+       x = "Time (hour)") +
+  theme_bw() +
+  theme(panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = 'transparent'),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key = element_rect(fill = 'transparent'),
+        panel.grid.major = element_blank(),
+        axis.text = element_text(size = 9),
+        axis.title = element_text(size = 13, face = "bold"),
+        legend.position = "none",
+        legend.box.background = element_rect(fill = "transparent"))
+
+# save figure
+ggsave('fig2b_vas_soreness.png',
+       width = 1.8, height = 2,
+       units = "in",
+       dpi = 300)
+
+
+df %>% 
+  na.omit() %>% 
+  ggplot(aes(x = Time, y = CK)) +
+  geom_line(aes(group = Group,
+                color = Group)) +
+  geom_errorbar(aes(ymin = CK, ymax = CK_SD,
+                    color = Group),
+                width = 0.1) +
+    geom_point(aes(fill = Group,
+                   color = Group),
+               size = 3,
+               shape = 21) +
+  scale_color_manual(values = c("#FF5A6D",
+                                "white")) +
+  scale_fill_manual(values = c("#FF5A6D",
+                                "white")) +
+  labs(y = "Plasma CK (U/L)",
+       x = "Time (hour)") +
+  theme_bw() +
+  theme(panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = 'transparent'),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key = element_rect(fill = 'transparent'),
+        panel.grid.major = element_blank(),
+        axis.text = element_text(size = 9),
+        axis.title = element_text(size = 13, face = "bold"),
+        legend.position = "none",
+        legend.box.background = element_rect(fill = "transparent"))
+
+# save figure
+ggsave('fig2c_ck.png',
+       width = 1.8, height = 2,
+       units = "in",
+       dpi = 300)
+
+df %>% 
+  ggplot(aes(x = Time, y = Force_Match)) +
+  geom_line(aes(group = Group,
+                color = Group)) +
+  geom_errorbar(aes(ymin = Force_Match, ymax = Force_Match_SD,
+                    color = Group),
+                width = 0.1) +
+    geom_point(aes(fill = Group,
+                   color = Group),
+               size = 3,
+               shape = 21) +
+  scale_color_manual(values = c("#FF5A6D",
+                                "white")) +
+  scale_fill_manual(values = c("#FF5A6D",
+                                "white")) +
+  labs(y = "Force Match (Nm)",
+       x = "Time (hour)") +
+  theme_bw() +
+  theme(panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = 'transparent'),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key = element_rect(fill = 'transparent'),
+        panel.grid.major = element_blank(),
+        axis.text = element_text(size = 9),
+        axis.title = element_text(size = 13, face = "bold"),
+        legend.position = "none",
+        legend.box.background = element_rect(fill = "transparent"))
+
+# save figure
+ggsave('fig2d_force_match.png',
+       width = 2, height = 2,
+       units = "in",
+       dpi = 300)
+```
