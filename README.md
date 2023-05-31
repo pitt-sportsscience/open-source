@@ -8,7 +8,7 @@ This is the official `open-source repository` of the University of Pittsburgh Sp
 The repository is structured by version, year and topic. 
 
 #### Monthly
-The `Monthly` folder contains all Pitt Sports Science Monthly's and relevant scripts to reproduce the figures from the manuscripts/PDFs. All data to reproduce the figures was extracted using `WebPlotDigitizer` by [ankitrohatgi](https://github.com/ankitrohatgi/WebPlotDigitizer)).
+The `Monthly` folder contains all Pitt Sports Science Monthly's and relevant scripts to reproduce the figures from the manuscripts/PDFs. All data to reproduce the figures was extracted using `WebPlotDigitizer` by [ankitrohatgi](https://github.com/ankitrohatgi/WebPlotDigitizer).
 
 ### Contact
 For questions, issues, or bugs, please contact Felix Proessl at fproessl@athletics.pitt.edu
