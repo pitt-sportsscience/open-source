@@ -1,0 +1,61 @@
+---
+title: "Scientific Method"
+author: 'SCI2150: Applied Sports Science'
+date: "2023-09-06"
+output: html_document
+---
+
+```{r package import, echo = TRUE}
+# import relevant libraries
+library(tidyverse)
+
+## color package
+pitt_colors <- c("#003594", "#FFB81C", "grey51", 'black', 'brown', "white")
+```
+
+
+```{r data creation, echo = TRUE}
+# create hypothetical data
+df <- data.frame(Time = c("Pre", "Pre", "Pre", "Pre", "Pre", "Pre", "Pre", "Pre",
+                          "Mid", "Mid", "Mid", "Mid", "Mid", "Mid", "Mid", "Mid", 
+                          "Post","Post","Post","Post","Post","Post","Post","Post"),
+                 ADD = c(310.5, 300.3, 360.5, 340.5, 290.6, 300.6, 305.8, 288.5,
+                         270.3, 260.8, 310.4, 300.2, 278.5, 300.1, 290.8, 250.2,
+                         302.8, 290.4, 312.8, 323.8, 280.3, 298.8, 300.9, 276.9),
+                 id = rep(c("Athlete 1", "Athlete 2", "Athlete 3", "Athlete 4", "Athlete 5", "Athlete 6", "Athlete 7", "Athlete 8"),
+                          times = 3))
+
+
+# consistent time-coding - specify order
+df$Time <- factor(df$Time, levels = c("Pre", "Mid", "Post"))
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r statistical analysis, echo=TRUE}
+# ANOVA
+summary(aov(ADD ~factor(Time) + Error(factor(id)), data = df))
+```
+
+
+```{r, data visualization, echo = TRUE}
+# plot figure
+df %>%
+  dplyr::group_by(Time) %>%
+  dplyr::summarise(ADD_m = mean(ADD),
+                   ADD_sd = sd(ADD)) %>%
+  ggplot(aes(x = Time, y = ADD_m)) +
+  geom_line(group = 1) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = ADD_m - ADD_sd,
+                    ymax = ADD_m + ADD_sd),
+                width = 0.05) +
+  labs(y = "Isometric Adductor Strength (N)") +
+  scale_fill_manual(values = pitt_colors) +
+  theme_minimal() +
+  theme(axis.line = element_line(color = "black"),
+        axis.text = element_text(size = 12),
+        axis.title = element_text(size = 14, face = "bold"))
+```

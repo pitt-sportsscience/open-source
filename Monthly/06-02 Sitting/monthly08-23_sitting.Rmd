@@ -1,0 +1,137 @@
+---
+title: "Pitt Sports Science Monthly: 06-02 Sitting"
+author: "Pitt Sports Science"
+date: "2023-08-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Sports Science Monthly - Sitting
+
+This is the R Markdown script accompanying the University of Pittsburgh Sports Science Monthly 06/02 - Sitting. The purpose of the script is to recreate figures by *Kuo et al. (2023)* using `WebPlotDigitizer` and `ggplot2`. The full-text version of the manuscript can be found in the European Journal of Applied Physiology:
+
+**Kuo FC, Lin YT, Chueh TY, Chang YK, Hung TM, Chen YC. Breaking prolonged sitting increases 24-h physical activity and self-perceived energy levels but does not acutely affect cognition in healthy adults. Eur J Appl Physiol. 2023 Aug 5. doi: 10.1007/s00421-023-05278-1. Epub ahead of print. PMID: 37543544.**
+
+
+### Import relevant packages, data and hex-colors
+
+```{r import, echo = FALSE, message = FALSE}
+library(tidyverse)
+
+# color package
+pitt_fill_colors = c("#003594", "grey31", "#FFB81C",  'black', 'brown')
+
+# import data
+df <- readxl::read_excel('data.xlsx') %>% mutate(Time = as.factor(Time))
+```
+
+## Visualizations
+
+Recreate figures 3A-D
+
+```{r visualization, pressure, echo=FALSE, message = FALSE}
+# satiety
+df %>% 
+  ggplot(aes(x = Time, y = Satiety)) +
+  geom_line(aes(group = Type,
+                color = Type)) +
+  geom_errorbar(aes(ymin = Satiety - Satiety_sd,
+                    ymax = Satiety + Satiety_sd,
+                    color = Type),
+                width = 0.3) +
+  geom_point(aes(color = Type),
+             size = 3) +
+  labs(y = "Satiety (0-100)") +
+  scale_color_manual(values = pitt_fill_colors) +
+  theme_bw() +
+  theme(panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = 'transparent'),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key = element_rect(fill = 'transparent'),
+        panel.grid.major = element_blank(),
+        axis.text.y = element_text(size = 9),
+        axis.text.x = element_blank(),
+        axis.title.y = element_text(size = 13, face = "bold"),
+        axis.title.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        legend.position = "none",
+        legend.box.background = element_rect(fill = "transparent"))
+
+# hunger
+df %>% 
+  ggplot(aes(x = Time, y = Hunger)) +
+  geom_line(aes(group = Type,
+                color = Type)) +
+  geom_errorbar(aes(ymin = Hunger - Hunger_sd,
+                    ymax = Hunger + Hunger_sd,
+                    color = Type),
+                width = 0.3) +
+  geom_point(aes(color = Type),
+             size = 3) +
+  labs(y = "Hunger (0-100)") +
+  scale_color_manual(values = pitt_fill_colors) +
+  theme_bw() +
+  theme(panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = 'transparent'),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key = element_rect(fill = 'transparent'),
+        panel.grid.major = element_blank(),
+        axis.text = element_text(size = 9),
+        axis.title = element_text(size = 13, face = "bold"),
+        legend.position = "none",
+        legend.box.background = element_rect(fill = "transparent"))
+
+# energy
+df %>% 
+  ggplot(aes(x = Time, y = Energy)) +
+  geom_line(aes(group = Type,
+                color = Type)) +
+  geom_errorbar(aes(ymin = Energy - Energy_sd,
+                    ymax = Energy + Energy_sd,
+                    color = Type),
+                width = 0.3) +
+  geom_point(aes(color = Type),
+             size = 3) +
+  labs(y = "Energy (0-100)") +
+  scale_color_manual(values = pitt_fill_colors) +
+  theme_bw() +
+  theme(panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = 'transparent'),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key = element_rect(fill = 'transparent'),
+        panel.grid.major = element_blank(),
+        axis.text.y = element_text(size = 9),
+        axis.text.x = element_blank(),
+        axis.title.y = element_text(size = 13, face = "bold"),
+        axis.title.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        legend.position = "none",
+        legend.box.background = element_rect(fill = "transparent"))
+
+# fatigue
+df %>% 
+  ggplot(aes(x = Time, y = Fatigue)) +
+  geom_line(aes(group = Type,
+                color = Type)) +
+  geom_errorbar(aes(ymin = Fatigue - Fatigue_sd,
+                    ymax = Fatigue + Fatigue_sd,
+                    color = Type),
+                width = 0.3) +
+  geom_point(aes(color = Type),
+             size = 3) +
+  labs(y = "Fatigue (0-100)") +
+  scale_color_manual(values = pitt_fill_colors) +
+  theme_bw() +
+  theme(panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = 'transparent'),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key = element_rect(fill = 'transparent'),
+        panel.grid.major = element_blank(),
+        axis.text = element_text(size = 9),
+        axis.title = element_text(size = 13, face = "bold"),
+        legend.position = "none",
+        legend.box.background = element_rect(fill = "transparent"))
+```
